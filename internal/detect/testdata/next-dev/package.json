@@ -1,0 +1,7 @@
+{
+  "name": "fixture-next-dev",
+  "private": true,
+  "devDependencies": {
+    "next": "15.0.0"
+  }
+}
