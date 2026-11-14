@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 func TestFlow(t *testing.T) {

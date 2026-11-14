@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/shipyardhq/shipyard/internal/config"
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/config"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 func TestProvisionAndGuardsDoNotCall(t *testing.T) {

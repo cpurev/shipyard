@@ -6,8 +6,8 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/shipyardhq/shipyard/internal/core"
-	"github.com/shipyardhq/shipyard/internal/mcpserver"
+	"github.com/cpurev/shipyard/internal/core"
+	"github.com/cpurev/shipyard/internal/mcpserver"
 )
 
 func main() {

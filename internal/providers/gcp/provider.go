@@ -20,9 +20,9 @@ import (
 	"google.golang.org/api/option"
 	runapi "google.golang.org/api/run/v2"
 
-	"github.com/shipyardhq/shipyard/internal/config"
-	"github.com/shipyardhq/shipyard/internal/providers"
-	"github.com/shipyardhq/shipyard/internal/version"
+	"github.com/cpurev/shipyard/internal/config"
+	"github.com/cpurev/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/version"
 )
 
 // vercelStyle is a Vercel region code, which is not a Cloud Run location.

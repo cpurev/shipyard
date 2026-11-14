@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 // FileStore writes every credential into one JSON file.

@@ -8,7 +8,7 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 // AuthorizeURL builds a Google OAuth URL for an existing Cloud account.

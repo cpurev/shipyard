@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/shipyardhq/shipyard/internal/version"
+	"github.com/cpurev/shipyard/internal/version"
 )
 
 const (

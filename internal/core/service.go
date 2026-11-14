@@ -7,12 +7,12 @@ import (
 	"regexp"
 	"sort"
 
-	"github.com/shipyardhq/shipyard/internal/audit"
-	"github.com/shipyardhq/shipyard/internal/config"
-	"github.com/shipyardhq/shipyard/internal/credentials"
-	"github.com/shipyardhq/shipyard/internal/detect"
-	"github.com/shipyardhq/shipyard/internal/providers"
-	"github.com/shipyardhq/shipyard/internal/secrets"
+	"github.com/cpurev/shipyard/internal/audit"
+	"github.com/cpurev/shipyard/internal/config"
+	"github.com/cpurev/shipyard/internal/credentials"
+	"github.com/cpurev/shipyard/internal/detect"
+	"github.com/cpurev/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/secrets"
 )
 
 var envKey = regexp.MustCompile(`^[A-Za-z_][A-Za-z0-9_]*$`)

@@ -1,4 +1,4 @@
-module github.com/shipyardhq/shipyard
+module github.com/cpurev/shipyard
 
 go 1.27.4
 

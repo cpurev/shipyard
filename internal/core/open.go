@@ -6,12 +6,12 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/shipyardhq/shipyard/internal/config"
-	"github.com/shipyardhq/shipyard/internal/credentials"
-	"github.com/shipyardhq/shipyard/internal/providers"
-	"github.com/shipyardhq/shipyard/internal/providers/fake"
-	"github.com/shipyardhq/shipyard/internal/providers/gcp"
-	"github.com/shipyardhq/shipyard/internal/providers/vercel"
+	"github.com/cpurev/shipyard/internal/config"
+	"github.com/cpurev/shipyard/internal/credentials"
+	"github.com/cpurev/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers/fake"
+	"github.com/cpurev/shipyard/internal/providers/gcp"
+	"github.com/cpurev/shipyard/internal/providers/vercel"
 )
 
 func openStore(home string, cfg config.Config) (credentials.Store, error) {

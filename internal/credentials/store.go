@@ -7,7 +7,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 // ErrKeychainNotSupported is returned by the OS keychain stub.

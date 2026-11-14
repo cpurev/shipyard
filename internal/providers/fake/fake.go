@@ -14,7 +14,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 // Provider implements providers.Provider without hosting anything.

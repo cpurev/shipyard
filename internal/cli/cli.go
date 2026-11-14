@@ -10,9 +10,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/shipyardhq/shipyard/internal/core"
-	"github.com/shipyardhq/shipyard/internal/providers"
-	"github.com/shipyardhq/shipyard/internal/version"
+	"github.com/cpurev/shipyard/internal/core"
+	"github.com/cpurev/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/version"
 )
 
 // Execute runs one CLI invocation. args do not include the program name.

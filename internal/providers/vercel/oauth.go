@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 const authorizeURL = "https://vercel.com/oauth/authorize"

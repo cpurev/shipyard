@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/shipyardhq/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers"
 )
 
 // Provider deploys a directory with the Vercel deployments REST API.

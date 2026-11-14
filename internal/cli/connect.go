@@ -13,13 +13,13 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/shipyardhq/shipyard/internal/audit"
-	"github.com/shipyardhq/shipyard/internal/config"
-	"github.com/shipyardhq/shipyard/internal/core"
-	"github.com/shipyardhq/shipyard/internal/credentials"
-	"github.com/shipyardhq/shipyard/internal/providers"
-	"github.com/shipyardhq/shipyard/internal/providers/gcp"
-	"github.com/shipyardhq/shipyard/internal/providers/vercel"
+	"github.com/cpurev/shipyard/internal/audit"
+	"github.com/cpurev/shipyard/internal/config"
+	"github.com/cpurev/shipyard/internal/core"
+	"github.com/cpurev/shipyard/internal/credentials"
+	"github.com/cpurev/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers/gcp"
+	"github.com/cpurev/shipyard/internal/providers/vercel"
 )
 
 const defaultOAuthRedirect = "http://127.0.0.1:8787/callback"

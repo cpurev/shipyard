@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shipyardhq/shipyard/internal/cli"
+	"github.com/cpurev/shipyard/internal/cli"
 )
 
 func main() {

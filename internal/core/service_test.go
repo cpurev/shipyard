@@ -8,11 +8,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/shipyardhq/shipyard/internal/audit"
-	"github.com/shipyardhq/shipyard/internal/config"
-	"github.com/shipyardhq/shipyard/internal/providers"
-	"github.com/shipyardhq/shipyard/internal/providers/fake"
-	"github.com/shipyardhq/shipyard/internal/secrets"
+	"github.com/cpurev/shipyard/internal/audit"
+	"github.com/cpurev/shipyard/internal/config"
+	"github.com/cpurev/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/providers/fake"
+	"github.com/cpurev/shipyard/internal/secrets"
 )
 
 func TestDeployScanAndAudit(t *testing.T) {

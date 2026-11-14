@@ -8,9 +8,9 @@ import (
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
-	"github.com/shipyardhq/shipyard/internal/core"
-	"github.com/shipyardhq/shipyard/internal/providers"
-	"github.com/shipyardhq/shipyard/internal/version"
+	"github.com/cpurev/shipyard/internal/core"
+	"github.com/cpurev/shipyard/internal/providers"
+	"github.com/cpurev/shipyard/internal/version"
 )
 
 // New builds an MCP server with the deploy, status, logs, set_secret, and
