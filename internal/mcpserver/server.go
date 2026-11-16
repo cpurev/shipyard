@@ -16,24 +16,42 @@ import (
 // New builds an MCP server with the deploy, status, logs, set_secret, and
 // list_apps tools. The server does not listen until Run or Serve.
 func New(svc *core.Service, logger *slog.Logger) *mcp.Server {
+	return newServer(svc, logger, false)
+}
+
+// NewReadOnly builds a server without deploy or set_secret. The HTTP server
+// uses it when the caller has not presented a bearer token, so those tools
+// are not advertised and cannot be called.
+func NewReadOnly(svc *core.Service, logger *slog.Logger) *mcp.Server {
+	return newServer(svc, logger, true)
+}
+
+func newServer(svc *core.Service, logger *slog.Logger, readOnly bool) *mcp.Server {
 	if logger == nil {
 		logger = slog.Default()
+	}
+	instructions := "Shipyard deploys an internal app onto a cloud account the user already connected. " +
+		"The default provider is fake, which only records the app locally. " +
+		"vercel, gcp, and kubernetes are used only after `shipyard connect`. " +
+		"kubernetes deploys a prebuilt container image and does not build it. " +
+		"Tools: deploy, status, logs, set_secret, list_apps."
+	if readOnly {
+		instructions += " This session is read-only: deploy and set_secret are not available."
 	}
 	server := mcp.NewServer(&mcp.Implementation{
 		Name:    "shipyard",
 		Version: version.Version,
 	}, &mcp.ServerOptions{
-		Instructions: "Shipyard deploys an internal app onto a cloud account the user already connected. " +
-			"The default provider is fake, which only records the app locally. " +
-			"vercel and gcp are used only after `shipyard connect`. " +
-			"Tools: deploy, status, logs, set_secret, list_apps.",
-		Logger: logger,
+		Instructions: instructions,
+		Logger:       logger,
 	})
 	h := &handlers{svc: svc}
-	mcp.AddTool(server, &mcp.Tool{
-		Name:        "deploy",
-		Description: "Deploy a local project. Refuses the deploy when the secret scan finds a credential, unless allowSecrets is true. The fake provider does not call a cloud API.",
-	}, h.deploy)
+	if !readOnly {
+		mcp.AddTool(server, &mcp.Tool{
+			Name:        "deploy",
+			Description: "Deploy a local project. Refuses the deploy when the secret scan finds a credential, unless allowSecrets is true. The fake provider does not call a cloud API. gcp and kubernetes need a prebuilt image.",
+		}, h.deploy)
+	}
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "status",
 		Description: "Show the status of one app on a connected provider.",
@@ -42,10 +60,12 @@ func New(svc *core.Service, logger *slog.Logger) *mcp.Server {
 		Name:        "logs",
 		Description: "Read recent log lines for one app.",
 	}, h.logs)
-	mcp.AddTool(server, &mcp.Tool{
-		Name:        "set_secret",
-		Description: "Store one secret on an app. The value is sent to the provider and is not written to the audit message.",
-	}, h.setSecret)
+	if !readOnly {
+		mcp.AddTool(server, &mcp.Tool{
+			Name:        "set_secret",
+			Description: "Store one secret on an app. The value is sent to the provider and is not written to the audit message.",
+		}, h.setSecret)
+	}
 	mcp.AddTool(server, &mcp.Tool{
 		Name:        "list_apps",
 		Description: "List apps on one connected provider.",
@@ -65,8 +85,8 @@ type handlers struct {
 type deployIn struct {
 	Name         string `json:"name" jsonschema:"application name; lowercase letters, digits, and hyphens"`
 	Dir          string `json:"dir,omitempty" jsonschema:"project directory; defaults to the current directory"`
-	Provider     string `json:"provider,omitempty" jsonschema:"fake, vercel, or gcp; defaults to the configured provider"`
-	Image        string `json:"image,omitempty" jsonschema:"container image; required for gcp"`
+	Provider     string `json:"provider,omitempty" jsonschema:"fake, vercel, gcp, or kubernetes; defaults to the configured provider"`
+	Image        string `json:"image,omitempty" jsonschema:"container image; required for gcp and kubernetes"`
 	AllowSecrets bool   `json:"allowSecrets,omitempty" jsonschema:"deploy even if the secret scan finds matches"`
 }
 
@@ -106,7 +126,7 @@ func (h *handlers) deploy(ctx context.Context, _ *mcp.CallToolRequest, in deploy
 
 type statusIn struct {
 	Name     string `json:"name" jsonschema:"application name"`
-	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, or gcp"`
+	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, gcp, or kubernetes"`
 }
 
 type statusOut struct {
@@ -137,7 +157,7 @@ func (h *handlers) status(ctx context.Context, _ *mcp.CallToolRequest, in status
 
 type logsIn struct {
 	Name     string `json:"name" jsonschema:"application name"`
-	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, or gcp"`
+	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, gcp, or kubernetes"`
 	Limit    int    `json:"limit,omitempty" jsonschema:"maximum number of lines; default 100"`
 }
 
@@ -171,7 +191,7 @@ type secretIn struct {
 	Name     string `json:"name" jsonschema:"application name"`
 	Key      string `json:"key" jsonschema:"environment variable name"`
 	Value    string `json:"value" jsonschema:"secret value"`
-	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, or gcp"`
+	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, gcp, or kubernetes"`
 }
 
 type secretOut struct {
@@ -188,7 +208,7 @@ func (h *handlers) setSecret(ctx context.Context, _ *mcp.CallToolRequest, in sec
 }
 
 type listIn struct {
-	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, or gcp"`
+	Provider string `json:"provider,omitempty" jsonschema:"fake, vercel, gcp, or kubernetes"`
 }
 
 type appItem struct {

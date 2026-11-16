@@ -31,7 +31,7 @@ const (
 type Config struct {
 	// Region is the default Cloud Run location. EU by default.
 	Region string `json:"region"`
-	// DefaultProvider is fake, vercel, or gcp.
+	// DefaultProvider is fake, vercel, gcp, or kubernetes. Fake is the default.
 	DefaultProvider string `json:"defaultProvider"`
 	// OrgDomain is the company email domain reserved for the login gate.
 	OrgDomain string `json:"orgDomain,omitempty"`

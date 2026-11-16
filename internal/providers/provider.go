@@ -54,6 +54,14 @@ func CredentialsReady(provider string, c Credentials) bool {
 		return c.Token != ""
 	case "gcp":
 		return c.Project != "" && (c.Token != "" || len(c.ServiceAccountJSON) > 0)
+	case "kubernetes":
+		if c.Extra == nil {
+			return false
+		}
+		if c.Extra["inCluster"] == "true" {
+			return true
+		}
+		return c.Extra["kubeconfig"] != ""
 	default:
 		return false
 	}

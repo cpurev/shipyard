@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: shipyard
+  labels:
+    app.kubernetes.io/name: shipyard
+    app.kubernetes.io/part-of: shipyard

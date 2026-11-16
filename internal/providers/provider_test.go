@@ -50,6 +50,18 @@ func TestCredentialsReady(t *testing.T) {
 	if CredentialsReady("gcp", Credentials{Token: "t"}) {
 		t.Fatal("gcp without project")
 	}
+	if CredentialsReady("kubernetes", Credentials{}) {
+		t.Fatal("empty kubernetes")
+	}
+	if !CredentialsReady("kubernetes", Credentials{Extra: map[string]string{"kubeconfig": "/tmp/kubeconfig"}}) {
+		t.Fatal("kubernetes kubeconfig")
+	}
+	if !CredentialsReady("kubernetes", Credentials{Extra: map[string]string{"inCluster": "true"}}) {
+		t.Fatal("kubernetes in-cluster")
+	}
+	if CredentialsReady("kubernetes", Credentials{Extra: map[string]string{"namespace": "apps"}}) {
+		t.Fatal("kubernetes namespace only")
+	}
 }
 
 func TestRejectProvisionAccount(t *testing.T) {

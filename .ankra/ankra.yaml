@@ -1,0 +1,23 @@
+apiVersion: ankra.io/v1
+kind: Application
+metadata:
+  name: shipyard
+  version: "0.2.0"
+  app_version: "0.2.0"
+  description: Deploy internal apps onto an account you already own
+  sources:
+    - "https://github.com/cpurev/shipyard"
+  keywords:
+    - go
+    - kubernetes
+components:
+  - name: shipyard
+    subdir: ""
+    dockerfile: Dockerfile
+    container_port: 8080
+health:
+  liveness:
+    - /healthz
+  readiness:
+    - /readyz
+  latency_budget_ms: 1000

@@ -5,8 +5,9 @@ on:
   pull_request:
 
 # Build, vet, test, and lint only.
-# This workflow must never deploy and must never call Vercel, GCP, or any
-# other cloud API. Tests use the fake provider and httptest.
+# This workflow must never deploy and must never call Vercel, GCP, UpCloud,
+# Ankra, or any other cloud API. Tests use the fake provider, the fake
+# Kubernetes client, and httptest.
 permissions:
   contents: read
 

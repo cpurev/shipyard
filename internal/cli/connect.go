@@ -28,16 +28,25 @@ func newConnectCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "connect",
 		Short: "Connect a cloud account you already own",
-		Long: `Store an API token or complete an OAuth code exchange for an account
-you already have. Shipyard does not create Vercel or Google accounts.
+		Long: `Store an API token, a kubeconfig path, or complete an OAuth code exchange
+for an account you already have. Shipyard does not create Vercel, Google,
+or UpCloud accounts, and it does not create clusters.
 
 Tokens are written to a file mode 0600 under the shipyard config directory
-(or SHIPYARD_HOME). The OS keychain backend is a stub.`,
+(or SHIPYARD_HOME). The OS keychain backend is a stub. A kubeconfig is not
+copied; only its path is stored.`,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			return cmd.Help()
 		},
 	}
-	cmd.AddCommand(newConnectStatusCmd(), newConnectFakeCmd(), newConnectVercelCmd(), newConnectGCPCmd())
+	cmd.AddCommand(
+		newConnectStatusCmd(),
+		newConnectFakeCmd(),
+		newConnectVercelCmd(),
+		newConnectGCPCmd(),
+		newConnectKubernetesCmd(),
+		newConnectUpCloudCmd(),
+	)
 	return cmd
 }
 
@@ -66,13 +75,13 @@ func newConnectStatusCmd() *cobra.Command {
 			printf(cmd.OutOrStdout(), "region:    %s\n", cfg.Region)
 			printf(cmd.OutOrStdout(), "provider:  %s\n", cfg.DefaultProvider)
 			printf(cmd.OutOrStdout(), "backend:   %s\n", cfg.CredentialBackend)
-			for _, name := range []string{"fake", "vercel", "gcp"} {
+			for _, name := range []string{"fake", "vercel", "gcp", "kubernetes"} {
 				creds, ok := all[name]
 				state := "not connected"
 				if ok && providers.CredentialsReady(name, creds) {
 					state = "connected"
 				}
-				printf(cmd.OutOrStdout(), "%-8s  %s\n", name, state)
+				printf(cmd.OutOrStdout(), "%-12s  %s\n", name, state)
 			}
 			return nil
 		},
