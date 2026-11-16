@@ -1,7 +1,7 @@
 GO ?= go
 BIN := bin
 
-.PHONY: build test vet lint fmt tidy ci
+.PHONY: build test vet lint fmt tidy ci docker
 
 build:
 	mkdir -p $(BIN)
@@ -25,3 +25,7 @@ tidy:
 
 # What CI runs. This target does not deploy.
 ci: build vet test lint
+
+# Local image only. This target does not push and does not deploy.
+docker:
+	docker build -t shipyard:local .

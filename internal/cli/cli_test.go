@@ -140,8 +140,105 @@ func TestHelp(t *testing.T) {
 	if err := Execute(nil, &stdout, &stderr); err != nil {
 		t.Fatal(err)
 	}
-	if !strings.Contains(stdout.String(), "fake") {
+	if !strings.Contains(stdout.String(), "fake") || !strings.Contains(stdout.String(), "serve") {
 		t.Fatalf("help:\n%s", stdout.String())
+	}
+}
+
+func TestServeHelpMentionsPort(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	if err := Execute([]string{"serve", "--help"}, &stdout, &stderr); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(stdout.String(), "PORT") || !strings.Contains(stdout.String(), "SHIPYARD_HTTP_TOKEN") {
+		t.Fatalf("serve help:\n%s", stdout.String())
+	}
+}
+
+func TestConnectKubernetesStoresPathOnly(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("SHIPYARD_HOME", home)
+	t.Setenv("SHIPYARD_K8S_NAMESPACE", "")
+	t.Setenv("SHIPYARD_K8S_DOMAIN", "")
+	t.Setenv("SHIPYARD_K8S_ZONE", "")
+	t.Setenv("SHIPYARD_K8S_INGRESS_CLASS", "")
+	t.Setenv("SHIPYARD_K8S_TLS_ISSUER", "")
+	kubeconfig := filepath.Join(t.TempDir(), "kubeconfig")
+	const token = "test-token"
+	if err := os.WriteFile(kubeconfig, []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: demo
+  cluster:
+    server: https://127.0.0.1:1
+    insecure-skip-tls-verify: true
+contexts:
+- name: demo
+  context:
+    cluster: demo
+    user: demo
+current-context: demo
+users:
+- name: demo
+  user:
+    token: `+token+`
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	out := mustRun(t, "connect", "upcloud")
+	if !strings.Contains(out, "upctl kubernetes config") || !strings.Contains(out, "fi-hel2") || strings.Contains(out, "api.upcloud.com") {
+		t.Fatalf("upcloud instructions:\n%s", out)
+	}
+	if _, err := os.Stat(filepath.Join(home, "credentials.json")); err == nil {
+		t.Fatal("printing instructions wrote credentials")
+	}
+	connected := mustRun(t, "connect", "kubernetes", "--kubeconfig", kubeconfig, "--namespace", "apps", "--domain", "apps.example.com", "--zone", "fi-hel2")
+	if strings.Contains(connected, token) {
+		t.Fatal("connect printed the kubeconfig token")
+	}
+	data, err := os.ReadFile(filepath.Join(home, "credentials.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(data), token) {
+		t.Fatal("credential store copied the kubeconfig token")
+	}
+	if !strings.Contains(string(data), kubeconfig) || !strings.Contains(string(data), "fi-hel2") {
+		t.Fatalf("credentials:\n%s", data)
+	}
+	status := mustRun(t, "connect", "status")
+	if strings.Contains(status, token) || !strings.Contains(status, "kubernetes") {
+		t.Fatalf("status:\n%s", status)
+	}
+}
+
+func TestConnectRejectsDomainURL(t *testing.T) {
+	home := t.TempDir()
+	t.Setenv("SHIPYARD_HOME", home)
+	kubeconfig := filepath.Join(t.TempDir(), "kubeconfig")
+	if err := os.WriteFile(kubeconfig, []byte(`apiVersion: v1
+kind: Config
+clusters:
+- name: demo
+  cluster:
+    server: https://127.0.0.1:1
+contexts:
+- name: demo
+  context:
+    cluster: demo
+    user: demo
+current-context: demo
+users:
+- name: demo
+  user:
+    token: test-token
+`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	var stdout, stderr bytes.Buffer
+	err := Execute([]string{"connect", "kubernetes", "--kubeconfig", kubeconfig, "--domain", "https://apps.example.com"}, &stdout, &stderr)
+	if err == nil || !strings.Contains(err.Error(), "hostname") {
+		t.Fatalf("err=%v", err)
 	}
 }
 

@@ -29,12 +29,14 @@ func newRoot() *cobra.Command {
 	root := &cobra.Command{
 		Use:   "shipyard",
 		Short: "Turn a local internal app into a deployment on an account you already own",
-		Long: `Shipyard deploys a project with the Vercel or Cloud Run account you connect.
+		Long: `Shipyard deploys a project with an account you connect: Vercel, Cloud Run,
+or a Kubernetes cluster you already run.
 
 The default provider is fake. It records the app on this machine and does not
-call a cloud API. Connect vercel or gcp before using those providers.
+call a cloud API. Connect vercel, gcp, or kubernetes before using those
+providers. shipyard serve is the long-running HTTP server.
 
-Nothing in this command creates a cloud account.`,
+Nothing in this command creates a cloud account or a cluster.`,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 		Version:       version.Version,
@@ -51,6 +53,7 @@ Nothing in this command creates a cloud account.`,
 		newSecretsCmd(),
 		newAppsCmd(),
 		newConnectCmd(),
+		newServeCmd(),
 	)
 	silence(root)
 	return root
@@ -102,8 +105,8 @@ func newDeployCmd() *cobra.Command {
 	}
 	cmd.Flags().StringVar(&opts.Name, "name", "", "app name")
 	cmd.Flags().StringVar(&opts.Dir, "dir", ".", "project directory")
-	cmd.Flags().StringVar(&opts.Provider, "provider", "", "fake, vercel, or gcp")
-	cmd.Flags().StringVar(&opts.Image, "image", "", "container image (required for gcp)")
+	cmd.Flags().StringVar(&opts.Provider, "provider", "", "fake, vercel, gcp, or kubernetes")
+	cmd.Flags().StringVar(&opts.Image, "image", "", "container image (required for gcp and kubernetes)")
 	cmd.Flags().BoolVar(&opts.AllowSecrets, "allow-secrets", false, "deploy even if the secret scan finds matches")
 	return cmd
 }
@@ -138,7 +141,7 @@ func newStatusCmd() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVar(&providerName, "provider", "", "fake, vercel, or gcp")
+	cmd.Flags().StringVar(&providerName, "provider", "", "fake, vercel, gcp, or kubernetes")
 	return cmd
 }
 
@@ -172,7 +175,7 @@ func newLogsCmd() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVar(&providerName, "provider", "", "fake, vercel, or gcp")
+	cmd.Flags().StringVar(&providerName, "provider", "", "fake, vercel, gcp, or kubernetes")
 	cmd.Flags().IntVar(&limit, "limit", 100, "maximum number of lines")
 	return cmd
 }
@@ -221,7 +224,7 @@ func newSecretsCmd() *cobra.Command {
 			return nil
 		},
 	}
-	set.Flags().StringVar(&providerName, "provider", "", "fake, vercel, or gcp")
+	set.Flags().StringVar(&providerName, "provider", "", "fake, vercel, gcp, or kubernetes")
 	set.Flags().StringVar(&value, "value", "", "secret value")
 	set.Flags().BoolVar(&fromStdin, "from-stdin", false, "read the secret value from stdin")
 	cmd.AddCommand(set)
@@ -259,7 +262,7 @@ func newAppsCmd() *cobra.Command {
 			return nil
 		},
 	}
-	cmd.Flags().StringVar(&providerName, "provider", "", "fake, vercel, or gcp")
+	cmd.Flags().StringVar(&providerName, "provider", "", "fake, vercel, gcp, or kubernetes")
 	return cmd
 }
 

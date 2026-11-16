@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipyard
+  labels:
+    app.kubernetes.io/name: shipyard
+    app.kubernetes.io/part-of: shipyard
+spec:
+  selector:
+    app.kubernetes.io/name: shipyard
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

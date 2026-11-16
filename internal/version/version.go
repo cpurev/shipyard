@@ -2,4 +2,4 @@
 package version
 
 // Version is the skeleton release. It is not a promise of stability.
-const Version = "0.1.0"
+const Version = "0.2.0"
